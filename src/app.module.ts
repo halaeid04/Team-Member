@@ -11,6 +11,8 @@ import { CategoriesModule } from './categories/categories.module';
 import { ProductsModule } from './products/products.module';
 import { ReviewsModule } from './reviews/reviews.module';
 import { HomeModule } from './home/home.module';
+import { CartModule } from './cart/cart.module';
+import { OrdersModule } from './orders/orders.module';
 
 @Module({
   imports: [
@@ -23,6 +25,8 @@ import { HomeModule } from './home/home.module';
     ProductsModule,
     ReviewsModule,
     HomeModule,
+    CartModule,
+    OrdersModule,
   ],
   providers: [
     { provide: APP_INTERCEPTOR, useClass: TransformInterceptor },

@@ -59,59 +59,68 @@ type CategoryConfig = {
   bases: Base[];
 };
 
+// "About this item" bullet points, shown on the product detail page.
 const featurePools: Record<string, string[]> = {
   headphones: [
-    'Industry leading active noise cancellation.',
-    'Up to 30 hours battery life.',
-    'Crystal clear hands-free calling.',
-    'Hi-Res audio certified.',
-    'Multipoint Bluetooth connection.',
-    'Fast charging: 5 hours from a 3 minute charge.',
+    'Industry Leading noise cancellation-two processors control 8 microphones for unprecedented noise cancellation. With Auto NC Optimizer, noise cancelling is automatically optimized based on your wearing conditions and environment.',
+    'Industry-leading call quality with our Precise Voice Pickup Technology uses four beamforming microphones and an AI-based noise reduction algorithm.',
+    'Magnificent Sound, engineered to perfection with the new Integrated Processor V1.',
+    'Crystal clear hands-free calling with 4 beamforming microphones, precise voice pickup, and advanced audio signal processing.',
+    'Up to 40-hour battery life for continuous music playtime (With Noise Cancellation ON, get up to 30 Hours of playtime, and With Noise Cancellation off get up to 40 Hours). All-day power and quick charging (3 min charge for 3 hours of playback).',
+    'Ultra-comfortable, lightweight design with soft fit leather.',
+    'Multipoint connection allows you to quickly switch between devices.',
+    'Carry your headphones effortlessly in the redesigned case.',
   ],
   watches: [
-    'Always-On Retina display.',
-    'Heart rate and blood oxygen monitoring.',
-    'Crash and fall detection.',
-    'Water resistant up to 50m.',
-    'Up to 18 hours battery life.',
-    'Built-in GPS tracking.',
+    'Always-On Retina display that is up to 2x brighter outdoors so it is easy to read even in bright sunlight.',
+    'Advanced health features including heart rate notifications, blood oxygen and ECG app to monitor your wellbeing.',
+    'Crash Detection and Fall Detection can connect you with emergency services when you need help.',
+    'Swimproof and water resistant up to 50 meters so you can take it from the pool to the shower.',
+    'All-day battery life of up to 18 hours, with fast charging to get you going quickly.',
+    'Built-in GPS for precise distance, pace and route tracking on your outdoor workouts.',
+    'A wide range of bands and watch faces so you can personalise it to match your style.',
   ],
   hats: [
-    'Breathable lightweight fabric.',
-    'Adjustable strap for a perfect fit.',
-    'UV protection for sunny days.',
-    'Durable stitched construction.',
-    'One size fits most.',
+    'Made from breathable lightweight fabric that keeps you cool and comfortable all day.',
+    'Adjustable strap at the back delivers a secure, customised fit for most head sizes.',
+    'Built-in UV protection helps shield your face and eyes on bright sunny days.',
+    'Durable stitched construction holds its shape wash after wash.',
+    'Versatile design pairs easily with both casual and sporty outfits.',
+    'One size fits most for hassle-free everyday wear.',
   ],
   mobiles: [
-    'Brilliant Super Retina display.',
-    'Pro-grade triple camera system.',
-    'All-day battery life.',
-    '5G connectivity.',
-    'Fast and secure face unlock.',
-    'Ceramic shield front protection.',
+    'Brilliant Super Retina XDR display with vivid colours and incredible detail, even in bright sunlight.',
+    'Pro-grade camera system captures stunning photos and 4K video in any light.',
+    'All-day battery life with fast and wireless charging support to keep you powered.',
+    'Superfast 5G connectivity for high-speed downloads and smooth streaming on the go.',
+    'Fast and secure face unlock keeps your phone and data protected.',
+    'Tough ceramic shield front is engineered to be more durable than any smartphone glass.',
+    'Built on a powerful, energy-efficient chip for blazing performance and smooth multitasking.',
   ],
   laptops: [
-    'Powerful multi-core processor.',
-    'Stunning high-resolution display.',
-    'All-day battery up to 18 hours.',
-    'Backlit keyboard and large trackpad.',
-    'Fast SSD storage.',
-    'Thin and lightweight aluminium body.',
+    'Powerful multi-core processor handles everything from everyday tasks to demanding creative workloads.',
+    'Stunning high-resolution display with rich colours and sharp detail for work and entertainment.',
+    'All-day battery life of up to 18 hours so you can work and play without searching for a charger.',
+    'Comfortable backlit keyboard and large precision trackpad for an effortless typing experience.',
+    'Fast SSD storage delivers near-instant boot times and quick file transfers.',
+    'Thin and lightweight aluminium body that is built to travel and easy to carry anywhere.',
+    'Advanced cooling keeps the system quiet and responsive under heavy load.',
   ],
   accessories: [
-    'Premium build quality.',
-    'Long-lasting battery.',
-    'Compact and travel friendly.',
-    'Universal device compatibility.',
-    'Fast wired and wireless charging.',
+    'Premium build quality with materials chosen for everyday durability.',
+    'Long-lasting battery keeps you powered through the whole day.',
+    'Compact and travel-friendly design slips easily into a bag or pocket.',
+    'Universal compatibility works seamlessly across your phones, tablets and laptops.',
+    'Fast wired and wireless charging support to top up in no time.',
+    'Simple, reliable connection with quick and easy setup.',
   ],
   shoes: [
-    'Soft responsive foam cushioning.',
-    'Breathable mesh upper.',
-    'Durable rubber outsole.',
-    'Lightweight everyday comfort.',
-    'Secure lace-up fit.',
+    'Soft responsive foam cushioning delivers all-day comfort with every step.',
+    'Breathable mesh upper keeps your feet cool and reduces moisture build-up.',
+    'Durable rubber outsole provides reliable grip and long-lasting wear.',
+    'Lightweight construction reduces fatigue during long walks and runs.',
+    'Secure lace-up fit locks your foot in place for stable support.',
+    'Versatile design transitions easily from workouts to casual everyday wear.',
   ],
 };
 
@@ -553,19 +562,18 @@ function buildProducts(): GeneratedProduct[] {
         // the category keyword. The `lock` seed makes each image deterministic
         // so a product always shows the same picture across requests.
         const imageKeyword = base.imageKeyword ?? cfg.keyword;
-        const imageCount = rand(1, 3);
+        // At least 3 images per product (3-5). Duplicate keywords across
+        // products are fine — LoremFlickr varies the photo by `lock` seed.
+        const imageCount = rand(3, 5);
         const images = Array.from({ length: imageCount }, (_, i) => ({
           url: `https://loremflickr.com/600/600/${imageKeyword}?lock=${counter * 10 + i + 1}`,
           alt: `${base.brand} ${base.model} ${variant}`,
           sortOrder: i + 1,
         }));
 
-        // Features (3 distinct from the pool)
-        const featureSet = new Set<string>();
-        while (featureSet.size < Math.min(3, base.features.length)) {
-          featureSet.add(pick(base.features));
-        }
-        const features = Array.from(featureSet).map((text, i) => ({
+        // "About this item" — seed the full bullet list, in order, for every
+        // product so the detail page always has rich content.
+        const features = base.features.map((text, i) => ({
           text,
           sortOrder: i + 1,
         }));
@@ -601,6 +609,9 @@ async function main() {
   console.log('Seeding e-commerce database...');
 
   // Clean slate (order matters for FK constraints).
+  await prisma.orderItem.deleteMany();
+  await prisma.order.deleteMany();
+  await prisma.cartItem.deleteMany();
   await prisma.review.deleteMany();
   await prisma.productFeature.deleteMany();
   await prisma.productImage.deleteMany();
@@ -613,7 +624,7 @@ async function main() {
   // re-seed (category 1 = Headphones, product ids start at 1, etc.).
   try {
     await prisma.$executeRawUnsafe(
-      `DELETE FROM sqlite_sequence WHERE name IN ('User','Address','Category','Product','ProductImage','ProductFeature','Review')`,
+      `DELETE FROM sqlite_sequence WHERE name IN ('User','Address','Category','Product','ProductImage','ProductFeature','Review','CartItem','Order','OrderItem')`,
     );
   } catch {
     // sqlite_sequence may not exist yet on a brand-new database — safe to ignore.
@@ -663,6 +674,58 @@ async function main() {
     },
   });
 
+  // Cart + orders for the test user so /cart and /orders have content.
+  const shipToName = userAddresses[0].name;
+  const sampleProducts = await prisma.product.findMany({
+    orderBy: { id: 'asc' },
+    take: 3,
+    include: { images: { orderBy: { sortOrder: 'asc' }, take: 1 } },
+  });
+
+  const orderNumber = () => {
+    const part = (length: number) =>
+      Array.from({ length }, () => rand(0, 9)).join('');
+    return `${part(3)}-${part(7)}-${part(7)}`;
+  };
+
+  if (sampleProducts.length > 0) {
+    // A live cart with the first two products.
+    await prisma.cartItem.createMany({
+      data: sampleProducts.slice(0, 2).map((p) => ({
+        userId: user.id,
+        productId: p.id,
+        quantity: rand(1, 2),
+      })),
+    });
+
+    // Two past orders, each with one product.
+    for (const product of sampleProducts.slice(0, 2)) {
+      const quantity = rand(1, 2);
+      const lineTotal = round(product.price * quantity);
+      await prisma.order.create({
+        data: {
+          userId: user.id,
+          orderNumber: orderNumber(),
+          status: 'PROCESSING',
+          subtotal: lineTotal,
+          total: lineTotal,
+          shipToName,
+          items: {
+            create: [
+              {
+                productId: product.id,
+                title: product.title,
+                image: product.images[0]?.url ?? null,
+                price: product.price,
+                quantity,
+              },
+            ],
+          },
+        },
+      });
+    }
+  }
+
   const todayDeals = products.filter((p) => p.isTodayDeal).length;
   const recommended = products.filter((p) => p.isRecommended).length;
   console.log(`Categories seeded: ${categories.length}`);
@@ -670,6 +733,8 @@ async function main() {
   console.log(`  - today deals: ${todayDeals}`);
   console.log(`  - recommended: ${recommended}`);
   console.log(`Test user: ${user.email} / 12345678`);
+  console.log(`  - cart items: ${Math.min(2, sampleProducts.length)}`);
+  console.log(`  - orders: ${Math.min(2, sampleProducts.length)}`);
   console.log('Seed completed successfully!');
 }
 

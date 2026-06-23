@@ -128,6 +128,8 @@ export class ProductsService {
         id: f.id,
         text: f.text,
       })),
+      // "About this item" bullet points for the product detail page.
+      aboutThisItem: product.features.map((f: any) => f.text),
       reviewSummary,
     };
   }
